@@ -16,9 +16,6 @@ import javax.swing.event.ListSelectionEvent;
 public class MainFrame {
 
 	private JFrame frame;
-	private JTextField textFieldDDLYear;
-	private JTextField textFieldDDLMonth;
-	private JTextField textFieldDDLDay;
 	
 	private JTabbedPane tabbedPane;
 	private JPanel panelAddTask;
@@ -93,17 +90,17 @@ public class MainFrame {
 		chkboxDDL.setBounds(89, 178, 133, 27);
 		panelAddTask.add(chkboxDDL);
 		
-		textFieldDDLYear = new JTextField();
+		JTextField textFieldDDLYear = new JTextField();
 		textFieldDDLYear.setBounds(136, 242, 86, 24);
 		panelAddTask.add(textFieldDDLYear);
 		textFieldDDLYear.setColumns(10);
 		
-		textFieldDDLMonth = new JTextField();
+		JTextField textFieldDDLMonth = new JTextField();
 		textFieldDDLMonth.setBounds(243, 242, 34, 24);
 		panelAddTask.add(textFieldDDLMonth);
 		textFieldDDLMonth.setColumns(10);
 		
-		textFieldDDLDay = new JTextField();
+		JTextField textFieldDDLDay = new JTextField();
 		textFieldDDLDay.setBounds(301, 242, 34, 24);
 		panelAddTask.add(textFieldDDLDay);
 		textFieldDDLDay.setColumns(10);
@@ -144,6 +141,11 @@ public class MainFrame {
 		JButton btnAddTask = new JButton("Add");
 		btnAddTask.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(textAreaContent.getText().equals("")) {
+					JOptionPane.showMessageDialog(frame, "任务内容不能为空！");
+					return;
+				}
+				//有ddl的情形
 				if(chkboxDDL.isSelected()) {
 					MyDate ddl;
 					try {
@@ -160,9 +162,10 @@ public class MainFrame {
 							new Task(textAreaContent.getText(),ddl)
 							);
 					
-				}else {
+				}else {//没有ddl的情形
 					listModelTasks.addElement(new Task(textAreaContent.getText()));
 				}
+				textAreaContent.setText("");
 			}
 		});
 		btnAddTask.setBounds(280, 327, 113, 27);
