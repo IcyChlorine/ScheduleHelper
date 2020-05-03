@@ -5,18 +5,15 @@ import com.alibaba.fastjson.*;
 import com.alibaba.fastjson.annotation.JSONField;
 
 public class Task {
-	@JSONField(name="content")
 	String content;
-	
-	@JSONField(name="ddlEnabled")
 	boolean ddlEnabled;
-	
-	@JSONField(name="ddl")
 	MyDate ddl;
-	
-	@JSONField(name="done")
 	boolean done;
 	
+	public Task() {
+		content="(null)";
+		ddlEnabled=false;
+	}
 	public Task(String content){
 		this.content=content;
 		this.ddlEnabled=false;
@@ -28,19 +25,32 @@ public class Task {
 		this.ddl=ddl;
 		this.done=false;
 	}
-	
+	@JSONField(name="content")
+	public void setContent(String content) {
+		this.content=content;
+	}
+	@JSONField(name="content")
 	public String getContent() {
 		return content;
 	}
+	@JSONField(name="ddl")
+	public void setDDL(MyDate ddl) {
+		this.ddl=ddl;
+	}
+	@JSONField(name="ddl")
 	public MyDate getDDL() {
 		return ddl;
 	}
-	public boolean getDDLEnabled() {
-		return ddlEnabled;
+	@JSONField(name="ddlEnabled")
+	public void setDDLEnabled(boolean enabled) {
+		ddlEnabled=enabled;
 	}
+	@JSONField(name="ddlEnabled")
 	public boolean isDDLEnabled() {
 		return ddlEnabled;
 	}
+	
+	@JSONField(serialize=false)
 	public boolean isDDLPassed() {
 		//细节：短路与运算符，避免ddl为初始化而造成bug
 		return ddlEnabled && ddl.compareTo(new MyDate())>0;

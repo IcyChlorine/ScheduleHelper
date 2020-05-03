@@ -1,6 +1,6 @@
 package StarSky;
 
-
+import java.io.*;
 import StarSky.myutil.MyDate;
 import java.awt.EventQueue;
 
@@ -9,8 +9,15 @@ import javax.swing.*;
 import java.awt.*;
 
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com.alibaba.fastjson.JSON;
+
 import javax.swing.event.ListSelectionEvent;
 
 public class MainFrame {
@@ -22,6 +29,8 @@ public class MainFrame {
 	private JPanel panelBrowseTask;
 	private JPanel panelDoneTask;
 	
+	private JList listTasks;
+	private JList listTasksDone;
 	private DefaultListModel<Task> listModelTasks;
 	private DefaultListModel<Task> listModelTasksDone;
 	
@@ -71,9 +80,24 @@ public class MainFrame {
 		tabbedPane.add("已添加任务",panelBrowseTask);
 		tabbedPane.add("已完成任务",panelDoneTask);
 		
+		
+		
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				load();
+			}
+			@Override
+	        public void windowClosing(WindowEvent e) {
+				save();
+	        }	
+			
+		});
+		
 		initializePanelNewTask();
 		initializePanelBrowseTask();
 		initializePanelDoneTask();
+
 	}
 	private void initializePanelNewTask() {
 
@@ -186,7 +210,7 @@ public class MainFrame {
 	}
 	
 	private void initializePanelBrowseTask() {
-		JList listTasks = new JList();
+		listTasks = new JList();
 		
 		listTasks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listTasks.setBounds(59, 62, 231, 238);
@@ -202,7 +226,7 @@ public class MainFrame {
 		panelBrowseTask.add(lblTextContent);
 		
 		JLabel lblContent = new JLabel("(null)");
-		lblContent.setBounds(389, 121, 72, 18);
+		lblContent.setBounds(370, 100, 200, 50);
 		panelBrowseTask.add(lblContent);
 		
 		JLabel lblTextDDL = new JLabel("DDL:");
@@ -234,6 +258,8 @@ public class MainFrame {
 			}
 		});
 		
+		
+		
 		JButton btnDone = new JButton("Done");
 		btnDone.setBounds(348, 301, 113, 27);
 		
@@ -260,7 +286,7 @@ public class MainFrame {
 		panelBrowseTask.add(btnDelete);
 	}
 	private void initializePanelDoneTask() {
-		JList listTasksDone = new JList();
+		listTasksDone = new JList();
 		listTasksDone.setBounds(64, 59, 231, 238);
 		listModelTasksDone = new DefaultListModel<>();
 		listTasksDone.setModel(listModelTasksDone);
@@ -279,8 +305,6 @@ public class MainFrame {
 		JLabel lblContent = new JLabel("(null)");
 		lblContent.setBounds(394, 118, 72, 18);
 		panelDoneTask.add(lblContent);
-		
-		
 		
 		JLabel lblNewLabel = new JLabel("DDL:");
 		lblNewLabel.setBounds(352, 179, 72, 18);
@@ -306,5 +330,88 @@ public class MainFrame {
 				lblNumTasksDone.setText("已完成任务数："+listModelTasksDone.size());
 			}
 		});
+	}
+	
+	static private String _readAll(String filename) throws Exception {
+		String encoding = "UTF-8"; 
+        File file = new File(filename); 
+        Long filelength = file.length(); 
+        byte[] filecontent = new byte[filelength.intValue()]; 
+        
+        FileInputStream in = new FileInputStream(file); 
+        in.read(filecontent); 
+        in.close(); 
+        
+        return new String(filecontent, encoding); 
+       
+	}
+	public void load() {
+		
+		try {
+			String strTasks=_readAll("tasks.json");
+			java.util.List<Task> tasks=JSON.parseArray(strTasks,Task.class);
+			listModelTasks.clear();
+			for(Task task:tasks) {
+				listModelTasks.addElement(task);
+			}
+			//这样做是为了触发JList的selection事件，从而让列表下方的“任务数”标志能够正确更新
+			if(!tasks.isEmpty())
+				listTasks.setSelectedIndex(0);
+			
+		} catch (FileNotFoundException e) {}//第一次可能会找不到文件，无所谓，重新创建这两文件，不报错了
+		  catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(frame, "读取任务列表失败！");
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			String strTasksDone=_readAll("tasksDone.json");
+			java.util.List<Task> tasksDone=JSON.parseArray(strTasksDone,Task.class);
+			listModelTasksDone.clear();
+			for(Task taskDone:tasksDone) {
+				listModelTasksDone.addElement(taskDone);
+			}
+			if(!tasksDone.isEmpty())
+				listTasksDone.setSelectedIndex(0);
+			
+		} catch (FileNotFoundException e) {}
+		  catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(frame, "读取已完成任务列表失败！");
+			e.printStackTrace();
+		}
+	}
+	public void save() {
+		java.util.List<Task> tasks=new java.util.ArrayList<Task>();
+		for(int i=0;i<listModelTasks.getSize();i++) {
+			tasks.add(listModelTasks.elementAt(i));
+		}
+		try {
+			FileWriter fileTasks;
+			fileTasks = new FileWriter("tasks.json");
+			fileTasks.write(JSON.toJSONString(tasks));
+			fileTasks.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(frame, "保存任务列表失败！");
+			e.printStackTrace();
+		}
+		
+		java.util.List<Task> tasksDone=new java.util.ArrayList<Task>();
+		for(int i=0;i<listModelTasksDone.getSize();i++) {
+			tasksDone.add(listModelTasksDone.elementAt(i));
+		}
+		try {
+			FileWriter fileTasksDone;
+			fileTasksDone = new FileWriter("tasksDone.json");
+			fileTasksDone.write(JSON.toJSONString(tasksDone));
+			fileTasksDone.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(frame, "保存已完成任务列表失败！");
+			e.printStackTrace();
+		}
 	}
 }

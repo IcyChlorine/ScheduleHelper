@@ -20,7 +20,8 @@ import static java.util.Calendar.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
+import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.annotation.*;
 
 public class MyDate implements Comparable{
 	int year;
@@ -69,6 +70,7 @@ public class MyDate implements Comparable{
 		}
 		return false;
 	}
+	@JSONField(serialize=false)
 	public boolean isLeapYear() {
 		return isLeapYear(year);
 	}
@@ -79,6 +81,7 @@ public class MyDate implements Comparable{
 		else
 			return 0;
 	}
+	
 	public void setYear(int year) {
 		this.year=year;
 	}
@@ -130,6 +133,7 @@ public class MyDate implements Comparable{
 	public int getDay() {
 		return day;
 	}
+	@JSONField(serialize=false)
 	public int getDayOfWeek() {
 		Calendar cld=Calendar.getInstance();
 		cld.set(year,month-1,day);//再次注意，calendar中月份的定义从零开始
