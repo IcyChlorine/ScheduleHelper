@@ -1,11 +1,20 @@
 package StarSky;
 
 import StarSky.myutil.MyDate;
+import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.annotation.JSONField;
 
 public class Task {
+	@JSONField(name="content")
 	String content;
+	
+	@JSONField(name="ddlEnabled")
 	boolean ddlEnabled;
+	
+	@JSONField(name="ddl")
 	MyDate ddl;
+	
+	@JSONField(name="done")
 	boolean done;
 	
 	public Task(String content){
@@ -25,6 +34,9 @@ public class Task {
 	}
 	public MyDate getDDL() {
 		return ddl;
+	}
+	public boolean getDDLEnabled() {
+		return ddlEnabled;
 	}
 	public boolean isDDLEnabled() {
 		return ddlEnabled;
