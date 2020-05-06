@@ -162,7 +162,7 @@ public class MainFrame {
 			}
 		});
 		
-		JButton btnAddTask = new JButton("Add");
+		JButton btnAddTask = new FairButton("Add");
 		btnAddTask.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(textAreaContent.getText().equals("")) {
@@ -195,7 +195,7 @@ public class MainFrame {
 		btnAddTask.setBounds(280, 327, 113, 27);
 		panelAddTask.add(btnAddTask);
 		
-		JButton btnReset = new JButton("Reset");
+		JButton btnReset = new FairButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textAreaContent.setText("");
@@ -260,7 +260,7 @@ public class MainFrame {
 		
 		
 		
-		JButton btnDone = new JButton("Done");
+		JButton btnDone = new FairButton("Done");
 		btnDone.setBounds(348, 301, 113, 27);
 		
 		btnDone.addActionListener(new ActionListener() {
@@ -274,7 +274,7 @@ public class MainFrame {
 		panelBrowseTask.add(btnDone);
 		
 		
-		JButton btnDelete = new JButton("Delete");
+		JButton btnDelete = new FairButton("Delete");
 		btnDelete.setBounds(486, 301, 113, 27);
 		btnDelete.addActionListener(new ActionListener() {
 			@Override
